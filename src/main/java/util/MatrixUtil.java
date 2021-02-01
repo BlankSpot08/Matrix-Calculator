@@ -1,5 +1,8 @@
 package util;
 
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+
 public class MatrixUtil {
     public static int[][] addMatrices(int[][] firstMatrix, int[][] secondMatrix) {
         if (firstMatrix.length != secondMatrix.length && firstMatrix[0].length != secondMatrix[0].length) {
@@ -71,6 +74,36 @@ public class MatrixUtil {
 
 
         return tempMatrix;
+    }
+
+    public static TextField[][] createMatrixTextFields(int column, int row) {
+        TextField[][] textFields = new TextField[column][row];
+
+        for (int i = 0; i < textFields.length; i++) {
+            for (int j = 0; j < textFields[i].length; j++) {
+                textFields[i][j] = new TextField("0");
+                textFields[i][j].setPrefWidth(50);
+                textFields[i][j].setPrefHeight(50);
+                textFields[i][j].setStyle("-fx-alignment: center");
+            }
+        }
+
+        return textFields;
+    }
+
+    public static Label[][] createMatrixLabels(int column, int row) {
+        Label[][] labels = new Label[column][row];
+
+        for (int i = 0; i < labels.length; i++) {
+            for (int j = 0; j < labels[i].length; j++) {
+                labels[i][j] = new Label("");
+                labels[i][j].setPrefWidth(50);
+                labels[i][j].setPrefHeight(50);
+                labels[i][j].setStyle("-fx-alignment: center");
+            }
+        }
+
+        return labels;
     }
 
     public static String toString(int[][] matrix) {

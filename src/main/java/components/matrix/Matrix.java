@@ -1,29 +1,32 @@
 package components.matrix;
 
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
-public class Matrix extends Pane {
-    public final Label[][] labels;
+public class Matrix {
+    private Label[][] labels;
+    private GridPane gridPane;
+    private final Pane pane;
 
-    public Matrix(Label[][] labels) {
+    public void setLabels(Label[][] labels) {
         this.labels = labels;
     }
 
-    public final Pane generate() {
-        Pane pane = new Pane();
-
-        pane.getChildren().add(createGeneratedGridPane(labels));
-
+    public final Pane getPane() {
         return pane;
     }
 
+    public Matrix(Label[][] labels) {
+        this.labels = labels;
+        pane = new Pane();
+
+        GridPane gridPane = createGeneratedGridPane(labels);
+        pane.getChildren().add(gridPane);
+    }
+
     private GridPane createGeneratedGridPane(Label[][] labels) {
-        GridPane gridPane = new GridPane();
+        gridPane = new GridPane();
         gridPane.setHgap(2);
         gridPane.setVgap(2);
 
@@ -35,5 +38,21 @@ public class Matrix extends Pane {
         }
 
         return gridPane;
+    }
+
+    public void clearGridPane() {
+        gridPane.getChildren().clear();
+    }
+
+    public void updateGridPane() {
+        for (int i = 0; i < labels.length; i++) {
+            for (int j = 0; j <  labels[i].length; j++) {
+                labels[i][j].setPrefWidth(50);
+                labels[i][j].setPrefHeight(50);
+                labels[i][j].setStyle("-fx-alignment: center");
+
+                gridPane.add(labels[i][j], i, j);
+            }
+        }
     }
 }

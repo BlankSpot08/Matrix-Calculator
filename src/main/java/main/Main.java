@@ -1,28 +1,40 @@
 package main;
 
-import components.Controller;
-import components.matrix.Matrix;
+import components.controller.Controller;
 import components.Title;
+import components.matrix.Matrix;
 import components.matrix.MatrixInputter;
 import javafx.application.Application;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import util.MatrixUtil;
 
 public class Main extends Application {
-    private Controller controller;
     private Title title;
     private BorderPane mainBorderPane;
+    private Controller controller;
 
-    public HBox centerHBox;
+    private HBox centerHBox;
+    private MatrixInputter leftMatrixInputter;
+    private MatrixInputter rightMatrixInputter;
+    private Matrix matrix;
 
-//    public TextField[][] leftTextFields;
-//    private TextField[][] rightTextFields;
-
-    public MatrixInputter leftMatrixInputter;
-    public MatrixInputter rightMatrixInputter;
+    public MatrixInputter getLeftMatrixInputter() {
+        return leftMatrixInputter;
+    }
+    public MatrixInputter getRightMatrixInputter() {
+        return rightMatrixInputter;
+    }
+    public Matrix getMatrix() {
+        return matrix;
+    }
 
     @Override
     public void start(Stage window) throws Exception {
@@ -33,7 +45,7 @@ public class Main extends Application {
         window.show();
     }
 
-    public Scene createScene() {
+    private Scene createScene() {
         Scene scene = new Scene(createMainBorderPane(), 800, 600);
 
         return scene;
@@ -42,9 +54,11 @@ public class Main extends Application {
     private BorderPane createMainBorderPane() {
         mainBorderPane = new BorderPane();
 
-        mainBorderPane.setBottom(createBottom());
-        mainBorderPane.setCenter(createCenter());
         mainBorderPane.setTop(createTop());
+
+        mainBorderPane.setCenter(createCenter());
+
+        mainBorderPane.setBottom(createBottom());
 
         return mainBorderPane;
     }
@@ -52,60 +66,30 @@ public class Main extends Application {
     private VBox createBottom() {
         controller = new Controller(this);
 
-        return controller.generate();
+        return controller.getVBox();
     }
 
     private HBox createCenter() {
         centerHBox = new HBox();
+        centerHBox.setAlignment(Pos.CENTER);
         centerHBox.setSpacing(25);
 
-        int leftColumns = Integer.parseInt(controller.leftMatrixSizeInputter.columnsTextField.getText());
-        int leftRows = Integer.parseInt(controller.leftMatrixSizeInputter.rowsTextField.getText());
-
-        TextField[][] leftTextFields = createMatrixTextFields(leftColumns, leftRows);
-
-        TextField[][] rightTextFields = createMatrixTextFields(3, 4);
-
-        Label[][] labels = new Label[3][3];
-
-        for (int i = 0; i < labels.length; i++) {
-            for (int j = 0; j < labels[i].length; j++) {
-                labels[i][j] = new Label("-");
-                labels[i][j].setPrefWidth(50);
-                labels[i][j].setPrefHeight(50);
-                labels[i][j].setStyle("-fx-alignment: center");
-            }
-        }
+        TextField[][] leftTextFields = MatrixUtil.createMatrixTextFields(3, 3);
+        TextField[][] rightTextFields = MatrixUtil.createMatrixTextFields(3, 3);
+        Label[][] labels = MatrixUtil.createMatrixLabels(3, 3);
 
         leftMatrixInputter = new MatrixInputter(leftTextFields);
         rightMatrixInputter = new MatrixInputter(rightTextFields);
-        Matrix matrix = new Matrix(labels);
+        matrix = new Matrix(labels);
 
-        centerHBox.getChildren().add(leftMatrixInputter.generate());
-        centerHBox.getChildren().add(rightMatrixInputter.generate());
-        centerHBox.getChildren().add(matrix.generate());
+        centerHBox.getChildren().addAll(leftMatrixInputter.getGridPane(), rightMatrixInputter.getGridPane(), matrix.getPane());
 
         return centerHBox;
     }
 
-    public TextField[][] createMatrixTextFields(int column, int row) {
-        TextField[][] textFields = new TextField[column][row];
-
-        for (int i = 0; i < textFields.length; i++) {
-            for (int j = 0; j < textFields[i].length; j++) {
-                textFields[i][j] = new TextField("0");
-                textFields[i][j].setPrefWidth(50);
-                textFields[i][j].setPrefHeight(50);
-                textFields[i][j].setStyle("-fx-alignment: center");
-            }
-        }
-
-        return textFields;
-    }
-
     private Pane createTop() {
-        Title title = new Title("Matrix Calculator");
+        title = new Title("Matrix Calculator");
 
-        return title.generate();
+        return title.getPane();
     }
 }

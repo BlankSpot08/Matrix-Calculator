@@ -2,26 +2,29 @@ package components;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.Pane;
 
 public class Title {
-    public Pane mainPane;
-    private Label titleLabel;
+    private final Pane pane;
 
-    public Title(String title) {
-        titleLabel = new Label(title);
+    public Pane getPane() {
+        return pane;
     }
 
-    public Pane generate() {
-        mainPane = new Pane();
+    public Title(String title) {
+        Label titleLabel = new Label(title);
 
-        mainPane.getChildren().add(titleLabel);
+        pane = createMainPane(titleLabel);
+    }
 
-        titleLabel.prefWidthProperty().bind(mainPane.widthProperty());
+    private Pane createMainPane(Label titleLabel) {
+        Pane pane = new Pane();
+
+        pane.getChildren().add(titleLabel);
+
+        titleLabel.prefWidthProperty().bind(pane.widthProperty());
         titleLabel.setAlignment(Pos.CENTER);
 
-        return mainPane;
+        return pane;
     }
 }

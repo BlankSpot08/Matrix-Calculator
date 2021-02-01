@@ -1,89 +1,62 @@
 package components.matrix;
 
-import components.Controller;
+import com.sun.istack.internal.NotNull;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
+import util.MatrixUtil;
 
-public class MatrixSizeInputter extends Pane {
-    public TextField columnsTextField;
-    public TextField rowsTextField;
+public class MatrixSizeInputter {
+    private final HBox mainPane;
 
-    private final Controller controller;
+    private TextField columnsTextField;
+    private TextField rowsTextField;
 
-    public MatrixSizeInputter(Controller controller) {
-        this.controller = controller;
+    private MatrixInputter matrixInputter;
+
+    public HBox getMainPane() {
+        return mainPane;
     }
 
-    public final HBox generate() {
-        HBox hBox = new HBox(3);
+    public MatrixSizeInputter(@NotNull MatrixInputter matrixInputter) {
+        this.matrixInputter = matrixInputter;
+
+        mainPane = new HBox(5);
 
         Label label = new Label("X");
         label.setAlignment(Pos.CENTER);
+        label.setPrefHeight(25);
 
-        hBox.getChildren().addAll(createColumnTextField(), label, createRowTextField());
-
-        return hBox;
+        mainPane.getChildren().addAll(createRowTextField(), label, createColumnTextField());
     }
 
     private TextField createRowTextField() {
         rowsTextField = new TextField("3");
         rowsTextField.setStyle("-fx-alignment: center");
         rowsTextField.setPrefWidth(50);
+        rowsTextField.setPrefHeight(25);
 
         rowsTextField.setOnKeyReleased(e -> {
             if (e.getCode().isDigitKey()) {
                 final int newRow = Integer.parseInt(rowsTextField.getText());
-                TextField[][] textFields = controller.main.createMatrixTextFields(controller.main.leftMatrixInputter.textFields.length, newRow);
+                TextField[][] textFields = MatrixUtil.createMatrixTextFields(matrixInputter.getTextFields().length, newRow);
 
-                final TextField[][] temp = controller.main.leftMatrixInputter.textFields;
+                final TextField[][] temp = matrixInputter.getTextFields();
 
-                textFields = convertTextFieldArray(textFields, temp, newRow);
+                textFields = newTextFieldArrayWithRows(textFields, temp);
 
-                controller.main.centerHBox.getChildren().remove(0);
-
-                controller.main.leftMatrixInputter = new MatrixInputter(textFields);
-
-                controller.main.leftMatrixInputter.textFields = textFields;
-                controller.main.centerHBox.getChildren().add(0, controller.main.leftMatrixInputter.generate());
+                matrixInputter.setTextFields(textFields);
+                matrixInputter.clearGridPane();
+                matrixInputter.updateGridPane();
             }
         });
 
         return rowsTextField;
     }
 
-    private TextField createColumnTextField() {
-        columnsTextField = new TextField("3");
-        columnsTextField.setStyle("-fx-alignment: center");
-        columnsTextField.setPrefWidth(50);
-
-        columnsTextField.setOnKeyReleased(e -> {
-            if (e.getCode().isDigitKey()) {
-                final int newColumn = Integer.parseInt(columnsTextField.getText());
-                TextField[][] textFields = controller.main.createMatrixTextFields(newColumn, controller.main.leftMatrixInputter.textFields[0].length);
-
-                final TextField[][] temp = controller.main.leftMatrixInputter.textFields;
-
-                textFields = convertTextFieldArray(textFields, temp, newColumn);
-
-                controller.main.centerHBox.getChildren().remove(0);
-
-                controller.main.leftMatrixInputter = new MatrixInputter(textFields);
-
-                controller.main.leftMatrixInputter.textFields = textFields;
-                controller.main.centerHBox.getChildren().add(0, controller.main.leftMatrixInputter.generate());
-            }
-
-//            columnsTextField.setText(columnsTextField.getText().replaceAll("[^\\d]", ""));
-        });
-
-        return columnsTextField;
-    }
-
-    private TextField[][] convertTextFieldArray(TextField[][] textFields, TextField[][] temp, int newThing) {
-        if (newThing >= temp.length) {
+    private TextField[][] newTextFieldArrayWithRows(TextField[][] textFields, TextField[][] temp) {
+        if (textFields[0].length >= temp[0].length) {
             for (int i = 0; i < temp.length; i++) {
                 for (int j = 0; j < temp[i].length; j++) {
                     textFields[i][j] = temp[i][j];
@@ -100,15 +73,44 @@ public class MatrixSizeInputter extends Pane {
         return textFields;
     }
 
-    public String matrixToString(TextField[][] textFields) {
-        StringBuilder stringBuilder = new StringBuilder();
+    private TextField createColumnTextField() {
+        columnsTextField = new TextField("3");
+        columnsTextField.setStyle("-fx-alignment: center");
+        columnsTextField.setPrefWidth(50);
 
-        for (int i = 0; i < textFields.length; i++) {
-            for (int j = 0; j < textFields[i].length; j++) {
-                stringBuilder.append(textFields[i][j].getText()).append(" ");
+        columnsTextField.setOnKeyReleased(e -> {
+            if (e.getCode().isDigitKey()) {
+                final int newColumn = Integer.parseInt(columnsTextField.getText());
+                TextField[][] textFields = MatrixUtil.createMatrixTextFields(newColumn, matrixInputter.getTextFields()[0].length);
+
+                final TextField[][] temp = matrixInputter.getTextFields();
+
+                textFields = newTextFieldArrayWithColumns(textFields, temp);
+
+                matrixInputter.setTextFields(textFields);
+                matrixInputter.clearGridPane();
+                matrixInputter.updateGridPane();
             }
-            stringBuilder.append("\n");
+        });
+
+        return columnsTextField;
+    }
+
+    private TextField[][] newTextFieldArrayWithColumns(TextField[][] textFields, TextField[][] temp) {
+        if (textFields.length >= temp.length) {
+            for (int i = 0; i < temp.length; i++) {
+                for (int j = 0; j < temp[i].length; j++) {
+                    textFields[i][j] = temp[i][j];
+                }
+            }
+        } else {
+            for (int i = 0; i < textFields.length; i++) {
+                for (int j = 0; j < textFields[i].length; j++) {
+                    textFields[i][j] = temp[i][j];
+                }
+            }
         }
-        return stringBuilder.toString();
+
+        return textFields;
     }
 }
