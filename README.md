@@ -1,4 +1,5 @@
 # Matrix-Calculator
+Status: Not Finished & Broken
 
 A matrix (plural matrices) is a rectangular array of numbers, symbols, or expressions, arranged in rows and columns. Matrices are commonly written in box brackets. The horizontal and vertical lines of entries in a matrix are called rows and columns, respectively. The size of a matrix is defined by the number of rows and columns that it contains. A matrix with m rows and n columns is called an m × n matrix or m-by-n matrix, while m and n are called its dimensions.The dimensions of the following matrix are 2 × 3 up(read “two by three”), because there are two rows and three columns.
 
